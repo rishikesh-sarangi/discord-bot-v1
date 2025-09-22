@@ -102,7 +102,7 @@ async def ask_img(ctx, *, question: str):
 def begin_procedure(question: str, is_img: bool = False):
 
     # first query duck duck go
-    search_results = query_ddg(question, is_img=is_img)
+    search_results = query_ddg(question, img=is_img)
 
     if not search_results or not search_results['success']:
         return "Sorry, I couldn't find any recent news on that topic."
