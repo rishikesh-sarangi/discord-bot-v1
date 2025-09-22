@@ -79,7 +79,6 @@ def begin_procedure(question: str):
 
 
 if __name__ == "__main__":
-    # bot.run(TOKEN)
-    begin_procedure("did d4vd have the same tatto as the body found in his tesla ?")
+    bot.run(TOKEN)
 
     
