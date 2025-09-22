@@ -22,10 +22,17 @@ async def on_ready():
 
 @bot.command()
 async def ask(ctx, *, question: str):
+
+    if ctx.message.reference and ctx.message.reference.resolved:
+        original_message = ctx.message.reference.resolved.content
+        full_question = f"{original_message} \n {question}"
+    else:
+        full_question = question
+
     processing_message = await ctx.send(f"🔎 Searching for news about: `{question}`...")
 
     try:
-        response_data = await asyncio.to_thread(begin_procedure, question)
+        response_data = await asyncio.to_thread(begin_procedure, full_question)
 
         if isinstance(response_data, str):
             await processing_message.edit(content=response_data)
