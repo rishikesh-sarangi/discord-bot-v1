@@ -1,4 +1,4 @@
-import google.generativeai as genai
+from google import genai
 import os
 from dotenv import load_dotenv
 
@@ -13,36 +13,40 @@ def call_llm_with_context(raw_context, question):
     
 
     try:
-        # genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-        # model = genai.GenerativeModel(os.getenv("GEMINI_MODEL"))
+        client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
-        # prompt = f"""
-        # You are an expert AI assistant tasked with answering questions based *only* on the provided text.
 
-        # **INSTRUCTIONS:**
-        # 1.  Read the CONTEXT below carefully.
-        # 2.  Your answer must be derived exclusively from the information within the CONTEXT.
-        # 3.  Do not use any external knowledge or make assumptions.
-        # 4.  Answer the USER'S QUESTION concisely.
-        # 5.  If the answer cannot be found in the CONTEXT, you must state: "The provided context does not contain enough information to answer this question."
+        prompt = f"""
+        You are an expert AI assistant tasked with answering questions based *only* on the provided text.
 
-        # --- START OF CONTEXT ---
-        # {context}
-        # --- END OF CONTEXT ---
+        **INSTRUCTIONS:**
+        1.  Read the CONTEXT below carefully.
+        2.  Your answer must be derived exclusively from the information within the CONTEXT.
+        3.  Do not use any external knowledge or make assumptions.
+        4.  Answer the USER'S QUESTION concisely.
+        5.  If the answer cannot be found in the CONTEXT, you must state: "The provided context does not contain enough information to answer this question."
 
-        # **USER'S QUESTION:**
-        # {question}
+        --- START OF CONTEXT ---
+        {context}
+        --- END OF CONTEXT ---
 
-        # **ANSWER:**
-        # """
+        **USER'S QUESTION:**
+        {question}
 
-        # generation_config = genai.types.GenerationConfig(max_output_tokens=250)
+        **ANSWER:**
+        """
 
-        # response = model.generate_content(prompt, generation_config=generation_config) 
-    
+        response = client.models.generate_content(
+            model=os.getenv("GEMINI_MODEL"),
+            contents=prompt,
+            config={
+                "max_output_tokens": 250
+            }
+        )
+
         return {
-            # "answer": response.text.strip(),
-            "answer": "THIS ISA HARD CODED ANSWER",
+            "answer": response.text.strip(),
+            # "answer": "THIS ISA HARD CODED ANSWER",
             "sources": sources
         }
     

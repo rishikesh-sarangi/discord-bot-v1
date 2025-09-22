@@ -13,7 +13,7 @@ intents = discord.Intents.default()
 intents.messages = True
 intents.message_content = True
 
-bot = commands.Bot(command_prefix='!', intents=intents, help_command=None)
+bot = commands.Bot(command_prefix=commands.when_mentioned_or('!'), intents=intents, help_command=None)
 
 @bot.event
 async def on_ready():
@@ -21,8 +21,8 @@ async def on_ready():
 
 
 @bot.command()
-async def news(ctx, *, question: str):
-    processing_message = await ctx.typing(f"🔎 Searching for news about: `{question}`...")
+async def ask(ctx, *, question: str):
+    processing_message = await ctx.send(f"🔎 Searching for news about: `{question}`...")
 
     try:
         response_data = await asyncio.to_thread(begin_procedure, question)
