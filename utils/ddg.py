@@ -4,7 +4,7 @@ import json
 
 def query_ddg(question: str):
     search_wrapper = DuckDuckGoSearchAPIWrapper(    
-        max_results=5
+        max_results=10
     )
 
     search = DuckDuckGoSearchResults(api_wrapper = search_wrapper, output_format='json')

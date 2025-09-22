@@ -3,3 +3,6 @@ langchain
 langchain-google-genai
 beautifulsoup4
 discord
+google-genai
+langchain-community
+ddgs
