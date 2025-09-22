@@ -61,7 +61,7 @@ def call_llm_with_context(raw_context, question):
         }
     
     except Exception as e:
-        return f"An error occurred with the Gemini API: {e}"
+        return f"An error occurred with the API: {e}"
 
 
 
