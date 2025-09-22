@@ -6,5 +6,3 @@ discord
 google-genai
 langchain-community
 ddgs
-requests
-Pillow
