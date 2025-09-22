@@ -1,0 +1,6 @@
+python-dotenv
+google-generativeai
+langchain
+langchain-google-genai
+beautifulsoup4
+discord
