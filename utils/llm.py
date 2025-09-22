@@ -51,7 +51,7 @@ def call_llm_with_context(raw_context, question):
             ],
             max_completion_tokens=300,
             temperature=0.1,
-            model="allam-2-7b",
+            model="deepseek-r1-distill-llama-70b",
         )
 
         return {
