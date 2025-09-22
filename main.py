@@ -74,10 +74,12 @@ def begin_procedure(question: str):
     # then query the llm
     response_from_llm = call_llm_with_context(context, question)
 
+    print(response_from_llm)
     return response_from_llm
 
 
 if __name__ == "__main__":
-    bot.run(TOKEN)
+    # bot.run(TOKEN)
+    begin_procedure("did d4vd have the same tatto as the body found in his tesla ?")
 
     

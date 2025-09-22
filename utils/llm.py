@@ -51,7 +51,7 @@ def call_llm_with_context(raw_context, question):
             ],
             max_completion_tokens=300,
             temperature=0.1,
-            model="groq/compound-mini",
+            model="allam-2-7b",
         )
 
         return {
