@@ -44,7 +44,7 @@ def call_llm_with_context(raw_context, question):
             model=os.getenv("GEMINI_MODEL"),
             contents=prompt,
             config={
-                "max_output_tokens": 250
+                "max_output_tokens": 400
             }
         )
 
