@@ -6,3 +6,4 @@ discord
 google-genai
 langchain-community
 ddgs
+groq 

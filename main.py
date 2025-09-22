@@ -70,6 +70,7 @@ def begin_procedure(question: str):
     # if we get results 
     context = search_results['message']
 
+
     # then query the llm
     response_from_llm = call_llm_with_context(context, question)
 

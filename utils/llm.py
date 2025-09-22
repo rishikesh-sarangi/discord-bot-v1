@@ -1,4 +1,4 @@
-from google import genai
+from groq import Groq
 import os
 from dotenv import load_dotenv
 
@@ -13,17 +13,18 @@ def call_llm_with_context(raw_context, question):
     
 
     try:
-        client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+        client = Groq()
 
 
         prompt = f"""
-        You are a versatile AI assistant that can act in two modes: 'Fact-Checker' or 'General AI'. Your first task is to analyze the user's question and determine if it is related to the provided news context.
+        You are a versatile AI assistant that can act in two modes: 'Fact-Checker' or 'General AI'. Your first task is to analyze the user's question and determine if it is related to the provided news context. Don't explain your reasoning, give straight answers.
 
         **MODE SELECTION:**
 
         1.  **If the USER'S QUESTION is directly related to, or is asking for clarification on, the provided CONTEXT**, you must act as a **Fact-Checker**. In this mode:
             * Your answer MUST be derived exclusively from the CONTEXT.
             * Do not use any external knowledge.
+            * Keep the answers concise and to the point.
             * If the answer isn't in the CONTEXT, state: "The provided context does not contain enough information to answer this question."
 
         2.  **If the USER'S QUESTION is a general knowledge question, a greeting, a math problem, or clearly unrelated to the CONTEXT**, you must act as a **General AI**. In this mode:
@@ -40,16 +41,21 @@ def call_llm_with_context(raw_context, question):
         **ANSWER:**
         """
 
-        response = client.models.generate_content(
-            model=os.getenv("GEMINI_MODEL"),
-            contents=prompt,
-            config={
-                "max_output_tokens": 400
-            }
+
+        chat_completion = client.chat.completions.create(
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt,
+                }
+            ],
+            max_completion_tokens=300,
+            temperature=0.1,
+            model="groq/compound-mini",
         )
 
         return {
-            "answer": response.text.strip(),
+            "answer": chat_completion.choices[0].message.content.strip(),
             # "answer": "THIS ISA HARD CODED ANSWER",
             "sources": sources
         }

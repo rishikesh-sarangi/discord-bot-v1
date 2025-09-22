@@ -3,7 +3,8 @@ from langchain_community.tools import DuckDuckGoSearchResults
 import json
 
 def query_ddg(question: str):
-    search_wrapper = DuckDuckGoSearchAPIWrapper(    
+    search_wrapper = DuckDuckGoSearchAPIWrapper(   
+        region="us-en", 
         max_results=10
     )
 
