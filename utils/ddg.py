@@ -4,7 +4,7 @@ import json
 
 def query_ddg(question: str):
     search_wrapper = DuckDuckGoSearchAPIWrapper(   
-        region="in-en", 
+        region="us-en", 
         max_results=10
     )
 
