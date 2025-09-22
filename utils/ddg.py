@@ -2,12 +2,9 @@ from langchain_community.utilities import DuckDuckGoSearchAPIWrapper
 from langchain_community.tools import DuckDuckGoSearchResults
 import json
 
-def query_ddg(question: str):
-    search_wrapper = DuckDuckGoSearchAPIWrapper(    
-        max_results=10
-    )
+def query_ddg(question: str, is_img: bool):
 
-    search = DuckDuckGoSearchResults(api_wrapper = search_wrapper, output_format='json')
+    search = DuckDuckGoSearchResults(output_format='json', source="images" if is_img else "news")
 
     search_results = search.invoke(question)
 

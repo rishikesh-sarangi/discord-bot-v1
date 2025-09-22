@@ -10,6 +10,7 @@ def call_llm_with_context(raw_context, question):
 
     context = formmated_context['context']
     sources = formmated_context['sources']
+    images = formmated_context['images']
     
 
     try:
@@ -20,11 +21,15 @@ def call_llm_with_context(raw_context, question):
         You are an expert AI assistant tasked with answering questions based *only* on the provided text.
 
         **INSTRUCTIONS:**
-        1.  Read the CONTEXT below carefully.
-        2.  Your answer must be derived exclusively from the information within the CONTEXT.
-        3.  Do not use any external knowledge or make assumptions.
-        4.  Answer the USER'S QUESTION concisely.
-        5.  If the answer cannot be found in the CONTEXT, you must state: "The provided context does not contain enough information to answer this question."
+        1) If the USER'S QUESTION relates to the CONTEXT (news, facts, events), answer using only the information provided. Do not add external knowledge or assumptions.
+
+        2) If the USER asks a general/social question (e.g., “How are you?”, “Who are you?”, “What's your purpose?”), respond in a natural, conversational tone as a helpful assistant.
+
+        3) If the USER asks a nonsensical, off-topic, or inappropriate question, politely decline or respond lightly without breaking character.
+
+        4) If the USER'S QUESTION cannot be answered from the CONTEXT and is not a general/social question, reply with: "I don't have enough information to answer this question."
+
+        5) Keep responses concise, clear, and user-friendly.
 
         --- START OF CONTEXT ---
         {context}
@@ -40,13 +45,14 @@ def call_llm_with_context(raw_context, question):
             model=os.getenv("GEMINI_MODEL"),
             contents=prompt,
             config={
-                "max_output_tokens": 250
+                "max_output_tokens": 250,
+                "temperature": 0.5
             }
         )
 
         return {
             "answer": response.text.strip(),
-            # "answer": "THIS ISA HARD CODED ANSWER",
+            "images": images,
             "sources": sources
         }
     
@@ -61,6 +67,7 @@ def format_context(search_results):
 
     context_parts = []
     sources = []
+    images = []
     
     context_parts.append("--- CONTEXT FROM SEARCH RESULTS ---")
 
@@ -74,10 +81,12 @@ def format_context(search_results):
         context_parts.append(formatted_item)
 
         sources.append(result.get('link', 'N/A'))
+        images.append(result.get('image', 'N/A'))
     
     context_parts.append("--- END OF CONTEXT ---")
     
     return {
         "context":"\n\n".join(context_parts),
-        "sources": sources
+        "sources": sources,
+        "images": images
     }
