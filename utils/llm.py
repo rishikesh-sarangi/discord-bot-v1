@@ -17,18 +17,14 @@ def call_llm_with_context(raw_context, question):
 
 
         prompt = f"""
-        You are a versatile AI assistant that can act in two modes: 'Fact-Checker' or 'General AI'. Your first task is to analyze the user's question and determine if it is related to the provided news context.
+        You are an expert AI assistant tasked with answering questions based *only* on the provided text.
 
-        **MODE SELECTION:**
-
-        1.  **If the USER'S QUESTION is directly related to, or is asking for clarification on, the provided CONTEXT**, you must act as a **Fact-Checker**. In this mode:
-            * Your answer MUST be derived exclusively from the CONTEXT.
-            * Do not use any external knowledge.
-            * If the answer isn't in the CONTEXT, state: "The provided context does not contain enough information to answer this question."
-
-        2.  **If the USER'S QUESTION is a general knowledge question, a greeting, a math problem, or clearly unrelated to the CONTEXT**, you must act as a **General AI**. In this mode:
-            * You MUST ignore the CONTEXT completely.
-            * Answer the question using your own general knowledge in a helpful and friendly tone.
+        **INSTRUCTIONS:**
+        1.  Read the CONTEXT below carefully.
+        2.  Your answer must be derived exclusively from the information within the CONTEXT.
+        3.  Do not use any external knowledge or make assumptions.
+        4.  Answer the USER'S QUESTION concisely.
+        5.  If the answer cannot be found in the CONTEXT, you must state: "The provided context does not contain enough information to answer this question."
 
         --- START OF CONTEXT ---
         {context}
