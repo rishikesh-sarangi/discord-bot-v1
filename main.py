@@ -101,13 +101,11 @@ def begin_procedure(question: str):
     # if we get results
     context = search_results['message']
 
-    print(context)
 
 
     # then query the llm
     response_from_llm = call_llm_for_news(context, question)
 
-    print(response_from_llm)
     return response_from_llm
 
 
