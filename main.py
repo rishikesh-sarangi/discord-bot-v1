@@ -49,7 +49,7 @@ async def ask(ctx, *, question: str):
 
 
 @bot.command()
-async def news(ctx, *, question: str):
+async def search(ctx, *, question: str):
     if(isolate_kunning(ctx)):
          await ctx.send("SYBAU LMAO DUMBASS MONKEY")
          return
@@ -88,6 +88,20 @@ async def news(ctx, *, question: str):
 
     except Exception as e:
         await processing_message.edit(content=f"An unexpected error occurred: {e}")
+
+
+@bot.command()
+async def help(ctx):
+    embed = discord.Embed(
+        title="CROCK: The Soy Boy Help Section",
+        description="Here are the commands you can use:",
+        color=discord.Color.blue()
+    )
+    embed.add_field(name="!ask <question>", value="Ask a general knowledge question.", inline=False)
+    embed.add_field(name="!search <query>", value="Search for news articles.", inline=False)
+    embed.add_field(name="!help", value="Shows this help message.", inline=False)
+    embed.set_footer(text="You can also mention the bot instead of using the '!' prefix.")
+    await ctx.send(embed=embed)
 
 
 def begin_procedure(question: str):
