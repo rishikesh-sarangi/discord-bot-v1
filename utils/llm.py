@@ -25,7 +25,6 @@ def call_llm_with_context(raw_context, question):
             * Your answer MUST be derived exclusively from the CONTEXT.
             * Do not use any external knowledge.
             * Keep the answers concise and to the point.
-            * If the answer isn't in the CONTEXT, state: "The provided context does not contain enough information to answer this question."
 
         2.  **If the USER'S QUESTION is a general knowledge question, a greeting, a math problem, or clearly unrelated to the CONTEXT**, you must act as a **General AI**. In this mode:
             * You MUST ignore the CONTEXT completely.
