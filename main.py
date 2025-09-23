@@ -1,4 +1,5 @@
 from utils.searxNG import query_searxng
+from utils.segragate_kunning import isolate_kunning
 from utils.llm import call_llm_for_news, call_llm_for_general_purpose
 import discord
 from discord.ext import commands
@@ -22,6 +23,10 @@ async def on_ready():
 
 @bot.command()
 async def ask(ctx, *, question: str):
+    if(isolate_kunning(ctx)):
+         await ctx.send("SYBAU LMAO DUMBASS MONKEY")
+         return
+    
     if ctx.message.reference and ctx.message.reference.resolved:
         original_message = ctx.message.reference.resolved.content
         full_question = f"{original_message} \n {question}"
@@ -45,6 +50,10 @@ async def ask(ctx, *, question: str):
 
 @bot.command()
 async def news(ctx, *, question: str):
+    if(isolate_kunning(ctx)):
+         await ctx.send("SYBAU LMAO DUMBASS MONKEY")
+         return
+    
     if ctx.message.reference and ctx.message.reference.resolved:
         original_message = ctx.message.reference.resolved.content
         full_question = f"{original_message} \n {question}"
