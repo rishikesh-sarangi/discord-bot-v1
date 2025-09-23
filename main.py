@@ -2,9 +2,10 @@ from utils.searxNG import query_searxng
 from utils.segragate_kunning import isolate_kunning
 from utils.llm import call_llm_for_news, call_llm_for_general_purpose
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 import os
 import asyncio
+import random
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -19,6 +20,59 @@ bot = commands.Bot(command_prefix=commands.when_mentioned_or('!'), intents=inten
 @bot.event
 async def on_ready():
     print(f'Logged in as {bot.user.name} ({bot.user.id})')
+    send_cron_message.start()
+
+
+@tasks.loop(hours=5)
+async def send_cron_message():
+    channel_id = int(os.getenv('CRON_CHANNEL_ID'))
+    channel = bot.get_channel(channel_id)
+
+    quotes =  [
+    "Nothing ever happens.",
+    "I just want to be left alone.",
+    "Life is pain.",
+    "Why do I even try?",
+    "This is fine.",
+    "Everything is meaningless.",
+    "I can't deal with this.",
+    "Nobody understands me.",
+    "Why bother?",
+    "It's all over anyway."
+    ]
+
+    random_quote = random.choice(quotes)
+
+    if channel:
+        await channel.send(random_quote)
+
+@bot.command()
+async def roll(ctx, dice: str = "1d6"):
+    try:
+        amount, sides = map(int, dice.lower().split('d'))
+        rolls = [random.randint(1, sides) for _ in range(amount)]
+        await ctx.send(f"🎲 You rolled: {rolls} → Total: {sum(rolls)}")
+    except Exception:
+        await ctx.send("Usage: !roll <amount>d<sides> e.g., !roll 2d8")
+
+@bot.command()
+async def mock(ctx, member: commands.MemberConverter):
+    """Mock a user in classic soyjack style."""
+    soyjack_insults = [
+        "Nothing ever happens in your brain, {name}.",
+        "I can't believe {name} thinks they're smart.",
+        "Why do you even try, {name}? It's cute.",
+        "{name}, your life is pain and despair.",
+        "Everything is meaningless to you, {name}.",
+        "Nobody understands you, {name}, and they never will.",
+        "It's all over anyway, {name}.",
+        "Your opinions are like expired memes, {name}.",
+        "{name}, the cringe is strong with you.",
+        "Imagine thinking you’re important, {name}."
+    ]
+
+    insult = random.choice(soyjack_insults).format(name=member.display_name)
+    await ctx.send(insult)
 
 
 @bot.command()
@@ -97,10 +151,15 @@ async def help(ctx):
         description="Here are the commands you can use:",
         color=discord.Color.blue()
     )
-    embed.add_field(name="!ask <question>", value="Ask a general knowledge question.", inline=False)
-    embed.add_field(name="!search <query>", value="Search for news articles.", inline=False)
+
+    embed.add_field(name="!ask <question>", value="Ask a general knowledge question to the AI.", inline=False)
+    embed.add_field(name="!search <query>", value="Search the web and fact-check results.", inline=False)
+    embed.add_field(name="!roll <XdY>", value="Roll dice. Example: `!roll 2d6` rolls two 6-sided dice.", inline=False)
+    embed.add_field(name="!mock @user1 [@user2 ...]", value="Mock one or multiple users in classic soyjack style.", inline=False)
     embed.add_field(name="!help", value="Shows this help message.", inline=False)
+
     embed.set_footer(text="You can also mention the bot instead of using the '!' prefix.")
+    
     await ctx.send(embed=embed)
 
 
