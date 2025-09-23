@@ -103,8 +103,7 @@ def begin_procedure(question: str):
 
 
 if __name__ == "__main__":
-    # bot.run(TOKEN)
-    begin_procedure("What is the capital of France?")
+    bot.run(TOKEN)
 
 
     
