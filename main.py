@@ -1,5 +1,5 @@
-from utils.ddg import query_ddg
-from utils.llm import call_llm_with_context
+from utils.searxNG import query_searxng
+from utils.llm import call_llm_for_news, call_llm_for_general_purpose
 import discord
 from discord.ext import commands
 import os
@@ -22,7 +22,29 @@ async def on_ready():
 
 @bot.command()
 async def ask(ctx, *, question: str):
+    if ctx.message.reference and ctx.message.reference.resolved:
+        original_message = ctx.message.reference.resolved.content
+        full_question = f"{original_message} \n {question}"
+    else:
+        full_question = question
 
+    processing_message = await ctx.send(f"🧠 Thinking...")
+
+    try:
+        response_data = await asyncio.to_thread(call_llm_for_general_purpose, full_question)
+
+        if isinstance(response_data, str):
+            await processing_message.edit(content=response_data)
+            return
+            
+        await processing_message.edit(content=response_data.get("answer", "No answer found."))
+
+    except Exception as e:
+        await processing_message.edit(content=f"An unexpected error occurred: {e}")
+
+
+@bot.command()
+async def news(ctx, *, question: str):
     if ctx.message.reference and ctx.message.reference.resolved:
         original_message = ctx.message.reference.resolved.content
         full_question = f"{original_message} \n {question}"
@@ -61,18 +83,18 @@ async def ask(ctx, *, question: str):
 
 def begin_procedure(question: str):
 
-    # first query duck duck go
-    search_results = query_ddg(question)
+    # first query search engine
+    search_results = query_searxng(question)
 
     if not search_results or not search_results['success']:
         return "Sorry, I couldn't find any recent news on that topic."
 
-    # if we get results 
+    # if we get results
     context = search_results['message']
 
 
     # then query the llm
-    response_from_llm = call_llm_with_context(context, question)
+    response_from_llm = call_llm_for_news(context, question)
 
     print(response_from_llm)
     return response_from_llm
@@ -80,5 +102,6 @@ def begin_procedure(question: str):
 
 if __name__ == "__main__":
     bot.run(TOKEN)
+
 
     
