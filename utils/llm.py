@@ -86,7 +86,7 @@ def call_llm_for_general_purpose(question):
             ],
             max_completion_tokens=300,
             temperature=0.1,
-            model="moonshotai/kimi-k2-instruct",
+            model=os.getenv("AI_MODEL"),
         )
 
         return {
