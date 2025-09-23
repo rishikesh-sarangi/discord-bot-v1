@@ -16,5 +16,5 @@ def query_searxng(question: str):
 
     return {
         "success": True,
-        "message": json.loads(search_results)
+        "message": search_results
     }

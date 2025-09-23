@@ -92,6 +92,8 @@ def begin_procedure(question: str):
     # if we get results
     context = search_results['message']
 
+    print(context)
+
 
     # then query the llm
     response_from_llm = call_llm_for_news(context, question)
@@ -101,7 +103,8 @@ def begin_procedure(question: str):
 
 
 if __name__ == "__main__":
-    bot.run(TOKEN)
+    # bot.run(TOKEN)
+    begin_procedure("What is the capital of France?")
 
 
     
