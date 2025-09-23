@@ -17,7 +17,7 @@ def call_llm_with_context(raw_context, question):
 
 
         prompt = f"""
-        You are a versatile AI assistant that can act in two modes: 'Fact-Checker' or 'General AI'. Your first task is to analyze the user's question and determine if it is related to the provided news context. Don't explain your reasoning, give straight answers.
+        You are a versatile AI assistant named "CROCK: The Soy Boy", that can act in two modes: 'Fact-Checker' or 'General AI'. Your first task is to analyze the user's question and determine if it is related to the provided news context. Don't explain your reasoning, give straight answers.
 
         **MODE SELECTION:**
 
