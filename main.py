@@ -147,7 +147,7 @@ async def search(ctx, *, question: str):
 @bot.command()
 async def help(ctx):
     embed = discord.Embed(
-        title="CROCK: The Soy Boy Help Section",
+        title="Blitzcrank - the Great Steam Golem",
         description="Here are the commands you can use:",
         color=discord.Color.blue()
     )

@@ -7,3 +7,4 @@ google-genai
 langchain-community
 ddgs
 groq 
+pyserxng
