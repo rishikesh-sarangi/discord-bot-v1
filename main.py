@@ -20,31 +20,7 @@ bot = commands.Bot(command_prefix=commands.when_mentioned_or('!'), intents=inten
 @bot.event
 async def on_ready():
     print(f'Logged in as {bot.user.name} ({bot.user.id})')
-    send_cron_message.start()
 
-
-@tasks.loop(hours=5)
-async def send_cron_message():
-    channel_id = int(os.getenv('CRON_CHANNEL_ID'))
-    channel = bot.get_channel(channel_id)
-
-    quotes =  [
-    "Nothing ever happens.",
-    "I just want to be left alone.",
-    "Life is pain.",
-    "Why do I even try?",
-    "This is fine.",
-    "Everything is meaningless.",
-    "I can't deal with this.",
-    "Nobody understands me.",
-    "Why bother?",
-    "It's all over anyway."
-    ]
-
-    random_quote = random.choice(quotes)
-
-    if channel:
-        await channel.send(random_quote)
 
 @bot.command()
 async def roll(ctx, dice: str = "1d6"):
@@ -57,7 +33,9 @@ async def roll(ctx, dice: str = "1d6"):
 
 @bot.command()
 async def mock(ctx, member: commands.MemberConverter):
-    """Mock a user in classic soyjack style."""
+    if await isolate_kunning(ctx):
+        return
+
     soyjack_insults = [
         "Nothing ever happens in your brain, {name}.",
         "I can't believe {name} thinks they're smart.",
@@ -77,9 +55,8 @@ async def mock(ctx, member: commands.MemberConverter):
 
 @bot.command()
 async def ask(ctx, *, question: str):
-    if(isolate_kunning(ctx)):
-         await ctx.send("SYBAU LMAO DUMBASS MONKEY")
-         return
+    if await isolate_kunning(ctx):
+        return
     
     if ctx.message.reference and ctx.message.reference.resolved:
         original_message = ctx.message.reference.resolved.content
@@ -104,9 +81,8 @@ async def ask(ctx, *, question: str):
 
 @bot.command()
 async def search(ctx, *, question: str):
-    if(isolate_kunning(ctx)):
-         await ctx.send("SYBAU LMAO DUMBASS MONKEY")
-         return
+    if await isolate_kunning(ctx):
+        return
     
     if ctx.message.reference and ctx.message.reference.resolved:
         original_message = ctx.message.reference.resolved.content
