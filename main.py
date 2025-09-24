@@ -55,9 +55,6 @@ async def mock(ctx, member: commands.MemberConverter):
 
 @bot.command()
 async def ask(ctx, *, question: str):
-    if await isolate_kunning(ctx):
-        return
-    
     if ctx.message.reference and ctx.message.reference.resolved:
         original_message = ctx.message.reference.resolved.content
         full_question = f"{original_message} \n {question}"
@@ -81,9 +78,6 @@ async def ask(ctx, *, question: str):
 
 @bot.command()
 async def search(ctx, *, question: str):
-    if await isolate_kunning(ctx):
-        return
-    
     if ctx.message.reference and ctx.message.reference.resolved:
         original_message = ctx.message.reference.resolved.content
         full_question = f"{original_message} \n {question}"
