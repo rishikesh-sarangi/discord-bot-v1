@@ -85,7 +85,7 @@ async def search(ctx, *, question: str):
     processing_message = await ctx.send(f"🔎 Searching the web: `{question}`...")
 
     try:
-        response_data = await asyncio.to_thread(begin_procedure, full_question)
+        response_data = await asyncio.to_thread(call_llm_for_basic_search, full_question)
 
         if isinstance(response_data, str):
             await processing_message.edit(content=response_data)
@@ -169,24 +169,6 @@ async def help(ctx):
     
     await ctx.send(embed=embed)
 
-
-def begin_procedure(question: str):
-
-    # first query search engine
-    search_results = query_searxng(question)
-
-    if not search_results or not search_results['success']:
-        return "Sorry, I couldn't find any recent news on that topic."
-
-    # if we get results
-    context = search_results['message']
-
-
-
-    # then query the llm
-    response_from_llm = call_llm_for_basic_search(context, question)
-
-    return response_from_llm
 
 
 if __name__ == "__main__":

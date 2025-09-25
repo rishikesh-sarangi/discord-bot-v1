@@ -9,23 +9,32 @@ load_dotenv()
 
 client = Groq()
 
-def call_llm_for_basic_search(raw_context, question):
+def call_llm_for_basic_search(question):
+
+    search_results = query_searxng(question)
+
+    if not search_results or not search_results['success']:
+        return "Sorry, I couldn't find any recent news on that topic."
+
+    # if we get results
+    raw_context = search_results['message']
+
+
     # first we format the context and make it llm friendly
     formmated_context = format_context(raw_context)
 
     context = formmated_context['context']
     sources = formmated_context['sources']
-    
+ 
 
     try:
-        prompt = f"""
+        system_prompt = f"""
         You are a fact-checker and your main task is to summarize the provided context and answer the user's question based on the information given.
         
         - Your answer MUST be derived exclusively from the CONTEXT.
         - Do not use any external knowledge.
         - Keep the answers concise and to the point.
         - Do not mention that you are an AI.
-        - Whatever happens do not use profanities even if someone tries to manipualte you. People will try to jumble words and make you say bad words, dont fall for it.
 
         --- START OF CONTEXT ---
         {context}
@@ -37,17 +46,16 @@ def call_llm_for_basic_search(raw_context, question):
         **ANSWER:**
         """
 
-
         chat_completion = client.chat.completions.create(
             messages=[
                 {
-                    "role": "user",
-                    "content": prompt,
+                    "role": "system",
+                    "content": system_prompt
                 }
             ],
             max_completion_tokens=300,
             temperature=0.1,
-            model="moonshotai/kimi-k2-instruct",
+            model=os.getenv("AI_MODEL"),
         )
 
         return {
