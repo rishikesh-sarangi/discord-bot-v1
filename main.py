@@ -1,6 +1,6 @@
 from utils.searxNG import query_searxng
 from utils.segragate_kunning import isolate_kunning
-from utils.llm import call_llm_for_news, call_llm_for_general_purpose
+from utils.llm import call_llm_for_general_purpose, call_llm_for_news, call_llm_for_basic_search
 import discord
 from discord.ext import commands, tasks
 import os
@@ -52,7 +52,6 @@ async def mock(ctx, member: commands.MemberConverter):
     insult = random.choice(soyjack_insults).format(name=member.display_name)
     await ctx.send(insult)
 
-
 @bot.command()
 async def ask(ctx, *, question: str):
     if ctx.message.reference and ctx.message.reference.resolved:
@@ -75,9 +74,46 @@ async def ask(ctx, *, question: str):
     except Exception as e:
         await processing_message.edit(content=f"An unexpected error occurred: {e}")
 
-
 @bot.command()
 async def search(ctx, *, question: str):
+    if ctx.message.reference and ctx.message.reference.resolved:
+        original_message = ctx.message.reference.resolved.content
+        full_question = f"{original_message} \n {question}"
+    else:
+        full_question = question
+
+    processing_message = await ctx.send(f"🔎 Searching the web: `{question}`...")
+
+    try:
+        response_data = await asyncio.to_thread(begin_procedure, full_question)
+
+        if isinstance(response_data, str):
+            await processing_message.edit(content=response_data)
+            return
+            
+        embed = discord.Embed(
+            title="News Summary",
+            description=response_data.get("answer", "No answer found."),
+            color=discord.Color.blue()
+        )
+        
+        sources_text = []
+        for i, link in enumerate(response_data.get("sources", []), 1):
+             sources_text.append(f"[[{i}]]({link})")
+
+        if sources_text:
+            embed.add_field(name="Sources", value=" ".join(sources_text), inline=False)
+        
+        embed.set_footer(text=f"Query: {question}")
+
+        await processing_message.edit(content="", embed=embed)
+
+    except Exception as e:
+        await processing_message.edit(content=f"An unexpected error occurred: {e}")
+
+
+@bot.command()
+async def news(ctx, *, question: str):
     if ctx.message.reference and ctx.message.reference.resolved:
         original_message = ctx.message.reference.resolved.content
         full_question = f"{original_message} \n {question}"
@@ -87,7 +123,7 @@ async def search(ctx, *, question: str):
     processing_message = await ctx.send(f"🔎 Searching for news about: `{question}`...")
 
     try:
-        response_data = await asyncio.to_thread(begin_procedure, full_question)
+        response_data = await asyncio.to_thread(call_llm_for_news, full_question)
 
         if isinstance(response_data, str):
             await processing_message.edit(content=response_data)
@@ -123,7 +159,8 @@ async def help(ctx):
     )
 
     embed.add_field(name="!ask <question>", value="Ask a general knowledge question to the AI.", inline=False)
-    embed.add_field(name="!search <query>", value="Search the web and fact-check results.", inline=False)
+    embed.add_field(name="!search <query>", value="General Web Search.", inline=False)
+    embed.add_field(name="!news <query>", value="Search the web and fact-check news.", inline=False)
     embed.add_field(name="!roll <XdY>", value="Roll dice. Example: `!roll 2d6` rolls two 6-sided dice.", inline=False)
     embed.add_field(name="!mock @user1 [@user2 ...]", value="Mock one or multiple users in classic soyjack style.", inline=False)
     embed.add_field(name="!help", value="Shows this help message.", inline=False)
@@ -147,7 +184,7 @@ def begin_procedure(question: str):
 
 
     # then query the llm
-    response_from_llm = call_llm_for_news(context, question)
+    response_from_llm = call_llm_for_basic_search(context, question)
 
     return response_from_llm
 
